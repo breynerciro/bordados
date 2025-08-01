@@ -1,9 +1,1 @@
 @import "tailwindcss";
-
-/* Estilos de prueba para verificar que Tailwind funciona */
-.test-tailwind {
-  background-color: red;
-  color: white;
-  padding: 1rem;
-  border-radius: 0.25rem;
-}

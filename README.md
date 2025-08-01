@@ -1,151 +1,150 @@
 # Administración de Bordados
 
-Una aplicación web moderna para gestionar pedidos de bordados de manera eficiente. Desarrollada con React, TypeScript y Tailwind CSS.
+Una aplicación web moderna para gestionar pedidos de bordados con actualización automática en tiempo real.
 
-## Características
+## ✨ Características Principales
 
-- ✅ **Registro de Bordados**: Formulario completo para agregar nuevos pedidos
-- 📊 **Estadísticas en Tiempo Real**: Muestra bordados pendientes, completados, ingresos y vencidos
-- 📱 **Integración con WhatsApp**: Click en el número de contacto abre el chat
-- 📋 **Gestión de Estados**: Marcar bordados como completados/pendientes
-- 💾 **Almacenamiento Local**: Los datos se guardan en el navegador
-- 🎨 **Interfaz Moderna**: Diseño responsive con Tailwind CSS
-- 🔍 **Filtros Automáticos**: Separación entre bordados pendientes y completados
+### 🔄 Actualización Automática en Tiempo Real
+- **Sincronización automática**: Las tablas se actualizan automáticamente cuando se realizan cambios
+- **Indicador de conexión**: Muestra el estado de conexión en tiempo real
+- **Notificaciones**: Avisos visuales cuando los datos se actualizan
+- **Timestamp de última actualización**: Muestra cuándo fue la última sincronización
 
-## Tecnologías Utilizadas
+### 📊 Gestión de Pedidos
+- **Registro de nuevos bordados**: Formulario completo con validación
+- **Marcado de completado**: Cambiar estado de pendiente a completado
+- **Eliminación de pedidos**: Con confirmación de seguridad
+- **Filtrado por estado**: Pestañas separadas para pendientes y completados
 
-- **React 19** - Framework de interfaz de usuario
-- **TypeScript** - Tipado estático para mayor seguridad
-- **Tailwind CSS** - Framework de CSS utilitario
-- **Vite** - Herramienta de construcción rápida
-- **LocalStorage** - Almacenamiento local de datos
+### 📈 Estadísticas en Tiempo Real
+- **Contador de pedidos**: Pendientes y completados
+- **Ingresos totales**: Cálculo automático de ganancias
+- **Estado de conexión**: Indicador visual del estado de sincronización
+- **Última actualización**: Timestamp de la última sincronización
 
-## Instalación y Uso
+### 🎨 Interfaz Moderna
+- **Diseño responsivo**: Funciona en dispositivos móviles y desktop
+- **Indicadores visuales**: Estados de carga, éxito y error
+- **Animaciones suaves**: Transiciones fluidas entre estados
+- **Iconografía clara**: Iconos intuitivos para cada acción
 
-### Prerrequisitos
+## 🚀 Tecnologías Utilizadas
 
-- Node.js (versión 16 o superior)
-- npm o yarn
+- **Frontend**: React 18 + TypeScript
+- **Base de datos**: Supabase (PostgreSQL)
+- **Tiempo real**: Supabase Realtime
+- **Estilos**: Tailwind CSS
+- **Build**: Vite
 
-### Instalación
+## 📋 Funcionalidades de Actualización Automática
 
-1. Clona o descarga el proyecto
-2. Abre una terminal en la carpeta del proyecto
-3. Instala las dependencias:
+### 1. Sincronización en Tiempo Real
+- Los cambios se reflejan automáticamente en todas las pestañas
+- No es necesario recargar la página
+- Optimizado para cambios incrementales
 
-```bash
-npm install
+### 2. Indicadores de Estado
+- **Conectado** (verde): Sincronización activa
+- **Desconectado** (rojo): Problemas de conexión
+- **Última actualización**: Timestamp en tiempo real
+
+### 3. Notificaciones Automáticas
+- Avisos cuando los datos se actualizan
+- Confirmaciones de acciones exitosas
+- Indicadores de acciones en progreso
+
+### 4. Prevención de Conflictos
+- Botones deshabilitados durante acciones
+- Confirmaciones para acciones destructivas
+- Manejo de errores con reintentos
+
+## 🛠️ Instalación y Configuración
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone [url-del-repositorio]
+   cd bordados-admin
+   ```
+
+2. **Instalar dependencias**
+   ```bash
+   npm install
+   ```
+
+3. **Configurar Supabase**
+   - Crear proyecto en [Supabase](https://supabase.com)
+   - Configurar las variables de entorno en `.env`
+   - Ejecutar el script de configuración de la base de datos
+
+4. **Ejecutar en desarrollo**
+   ```bash
+   npm run dev
+   ```
+
+## 📱 Uso de la Aplicación
+
+### Agregar Nuevo Bordado
+1. Hacer clic en "Nuevo Bordado"
+2. Completar el formulario con los datos del cliente
+3. Los datos se sincronizan automáticamente
+
+### Marcar como Completado
+1. En la tabla de pendientes, hacer clic en "Completar"
+2. Confirmar la acción
+3. El pedido se mueve automáticamente a la pestaña de completados
+
+### Eliminar Pedido
+1. Hacer clic en "Eliminar"
+2. Confirmar la eliminación
+3. El pedido se elimina de todas las tablas automáticamente
+
+## 🔧 Configuración de Supabase
+
+Ver el archivo `SUPABASE_SETUP.md` para instrucciones detalladas de configuración.
+
+## 📊 Estructura de la Base de Datos
+
+```sql
+CREATE TABLE bordados (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  nombreCliente TEXT NOT NULL,
+  numeroContacto TEXT NOT NULL,
+  descripcion TEXT NOT NULL,
+  cantidad INTEGER NOT NULL,
+  precio DECIMAL(10,2) NOT NULL,
+  precioTotal DECIMAL(10,2) NOT NULL,
+  fechaEntrega DATE NOT NULL,
+  fechaCreacion TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  completado BOOLEAN DEFAULT FALSE
+);
 ```
 
-4. Inicia el servidor de desarrollo:
+## 🎯 Características de Actualización Automática
 
-```bash
-npm run dev
-```
+### Optimizaciones Implementadas
+- **Cambios incrementales**: Solo se actualizan los datos modificados
+- **Suscripción eficiente**: Una sola suscripción para todos los cambios
+- **Manejo de desconexión**: Reconexión automática
+- **Verificación periódica**: Estado de conexión cada 30 segundos
 
-5. Abre tu navegador en `http://localhost:5173`
+### Beneficios para el Usuario
+- **Experiencia fluida**: Sin interrupciones por recargas
+- **Datos siempre actualizados**: Sincronización en tiempo real
+- **Feedback visual**: Indicadores claros del estado
+- **Prevención de pérdida de datos**: Confirmaciones y validaciones
 
-## Funcionalidades
-
-### Registro de Bordados
-
-- **Nombre del Cliente**: Nombre completo del cliente
-- **Número de Contacto**: Teléfono con integración a WhatsApp
-- **Descripción**: Detalles del bordado a realizar
-- **Cantidad**: Número de piezas
-- **Precio Unitario**: Precio por pieza
-- **Fecha de Entrega**: Fecha límite de entrega
-- **Precio Total**: Calculado automáticamente
-
-### Gestión de Estados
-
-- **Bordados Pendientes**: Lista de trabajos por realizar
-- **Bordados Completados**: Lista de trabajos finalizados
-- **Marcar como Completado**: Cambiar estado con un click
-- **Eliminar Bordado**: Eliminar registros no deseados
-
-### Estadísticas
-
-- **Pendientes**: Número de bordados por realizar
-- **Completados**: Número de bordados finalizados
-- **Ingresos Totales**: Suma de todos los bordados completados
-- **Vencidos**: Bordados con fecha de entrega pasada
-
-### Integración WhatsApp
-
-Al hacer click en cualquier número de contacto, se abrirá automáticamente WhatsApp Web o la aplicación móvil con el número pre-cargado.
-
-## Estructura del Proyecto
-
-```
-src/
-├── components/          # Componentes React
-│   ├── FormularioBordado.tsx
-│   ├── TablaBordados.tsx
-│   └── Estadisticas.tsx
-├── services/           # Servicios de datos
-│   └── bordadoService.ts
-├── types/              # Definiciones TypeScript
-│   └── Bordado.ts
-├── App.tsx            # Componente principal
-└── main.tsx           # Punto de entrada
-```
-
-## Almacenamiento de Datos
-
-Los datos se almacenan localmente en el navegador usando `localStorage`. Esto significa que:
-
-- Los datos persisten entre sesiones
-- No se requiere servidor externo
-- Los datos son privados y seguros
-- Se puede exportar/importar manualmente desde las herramientas de desarrollador
-
-## Personalización
-
-### Colores y Estilos
-
-Los estilos se pueden personalizar editando las clases de Tailwind CSS en los componentes:
-
-- **Colores principales**: `blue-600`, `green-500`, `red-500`
-- **Espaciado**: `p-6`, `mb-6`, `gap-4`
-- **Tipografía**: `text-2xl`, `font-bold`
-
-### Agregar Nuevas Funcionalidades
-
-1. **Nuevos Campos**: Agregar propiedades en `types/Bordado.ts`
-2. **Validaciones**: Modificar `FormularioBordado.tsx`
-3. **Estadísticas**: Actualizar `Estadisticas.tsx`
-4. **Persistencia**: Modificar `bordadoService.ts`
-
-## Scripts Disponibles
-
-```bash
-npm run dev          # Inicia servidor de desarrollo
-npm run build        # Construye para producción
-npm run preview      # Previsualiza la build
-npm run lint         # Ejecuta el linter
-```
-
-## Contribución
+## 🤝 Contribución
 
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+5. Abrir un Pull Request
 
-## Licencia
+## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
 
-## Soporte
+## 🆘 Soporte
 
-Si tienes alguna pregunta o problema:
-
-1. Revisa la documentación
-2. Busca en los issues existentes
-3. Crea un nuevo issue con detalles del problema
-
----
-
-**Desarrollado con ❤️ para la gestión eficiente de bordados**
+Para soporte técnico o preguntas sobre la configuración, crear un issue en el repositorio.
