@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Bordado } from '../types/Bordado';
 
 interface FormularioBordadoProps {
-  onSubmit: (bordado: Omit<Bordado, 'id' | 'fechaCreacion' | 'completado'>) => void;
+  onSubmit: (bordado: Omit<Bordado, 'id' | 'fechaCreacion' | 'completado' | 'pagado'>) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -24,12 +24,21 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const precioTotal = formData.cantidad * formData.precio;
     
+    // Si no se proporciona fecha de entrega, establecer para mañana
+    let fechaEntrega = formData.fechaEntrega;
+    if (!fechaEntrega) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 2);
+      fechaEntrega = tomorrow.toISOString().split('T')[0];
+    }
+    
     onSubmit({
       ...formData,
+      fechaEntrega,
       precioTotal
     });
 
@@ -72,9 +81,8 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
               name="numeroContacto"
               value={formData.numeroContacto}
               onChange={handleChange}
-              required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Ej: 3123456789"
+              placeholder="Ej: 3123456789 (opcional)"
             />
           </div>
         </div>
@@ -134,9 +142,14 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
               name="fechaEntrega"
               value={formData.fechaEntrega}
               onChange={handleChange}
-              required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Si no se especifica, será para mañana"
             />
+            {!formData.fechaEntrega && (
+              <p className="text-xs text-gray-500 mt-1">
+                Si no se especifica, se establecerá para mañana automáticamente
+              </p>
+            )}
           </div>
         </div>
 
