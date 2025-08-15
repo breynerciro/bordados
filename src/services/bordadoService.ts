@@ -171,7 +171,7 @@ export const bordadoService = {
           schema: 'public',
           table: 'bordados'
         },
-        async (payload) => {
+        async (payload: { eventType: string; new: Bordado; old: Bordado; }) => {
           
           try {
             // Actualizar la lista local según el tipo de cambio
@@ -209,7 +209,7 @@ export const bordadoService = {
           }
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: string) => {
         if (status === 'SUBSCRIBED' && !isInitialized) {
           // Cargar datos iniciales cuando la suscripción esté activa
           bordadoService.getBordados()
