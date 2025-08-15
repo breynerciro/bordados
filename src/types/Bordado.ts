@@ -9,6 +9,8 @@ export interface Bordado {
   fechaEntrega: string;
   fechaCreacion: string;
   completado: boolean;
+  pagado: boolean;
 }
 
-export type EstadoBordado = 'pendiente' | 'completado'; 
+export type EstadoBordado = 'pendiente' | 'completado';
+export type EstadoPago = 'pendiente' | 'pagado'; 

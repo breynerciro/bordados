@@ -1,48 +1,86 @@
-import { useState, useEffect } from 'react';
-import type { Bordado } from './types/Bordado';
-import { bordadoService } from './services/bordadoService';
+import { useState } from 'react';
 import { FormularioBordado } from './components/FormularioBordado';
 import { TablaBordados } from './components/TablaBordados';
 import { Estadisticas } from './components/Estadisticas';
 import { Modal } from './components/Modal';
+import { Notification } from './components/Notification';
+import { useBordados } from './hooks/useBordados';
+import type { Bordado } from './types/Bordado';
 
 function App() {
-  const [bordados, setBordados] = useState<Bordado[]>([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [pestañaActiva, setPestañaActiva] = useState<'pendientes' | 'completados'>('pendientes');
+  
+  const {
+    bordados,
+    isLoading,
+    error,
+    successMessage,
+    addBordado,
+    toggleCompletado,
+    togglePagado,
+    deleteBordado,
+    clearError,
+    clearSuccess
+  } = useBordados();
 
-  useEffect(() => {
-    cargarBordados();
-  }, []);
-
-  const cargarBordados = () => {
-    const bordadosCargados = bordadoService.getBordados();
-    setBordados(bordadosCargados);
+  const handleAgregarBordado = async (nuevoBordado: Omit<Bordado, 'id' | 'fechaCreacion' | 'completado' | 'pagado'>) => {
+    const success = await addBordado(nuevoBordado);
+    if (success) {
+      setMostrarModal(false);
+    }
+    // Si no es exitoso, el error ya se muestra automáticamente
   };
 
-  const handleAgregarBordado = (nuevoBordado: Omit<Bordado, 'id' | 'fechaCreacion' | 'completado'>) => {
-    bordadoService.addBordado(nuevoBordado);
-    cargarBordados();
-    setMostrarModal(false);
+  const handleToggleCompletado = async (id: string) => {
+    await toggleCompletado(id);
+    // El éxito o error se maneja automáticamente
   };
 
-  const handleToggleCompletado = (id: string) => {
-    bordadoService.toggleCompletado(id);
-    cargarBordados();
+  const handleTogglePagado = async (id: string) => {
+    await togglePagado(id);
+    // El éxito o error se maneja automáticamente
   };
 
-  const handleDeleteBordado = (id: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este bordado?')) {
-      bordadoService.deleteBordado(id);
-      cargarBordados();
+  const handleDeleteBordado = async (id: string) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este bordado? Esta acción no se puede deshacer.')) {
+      await deleteBordado(id);
+      // El éxito o error se maneja automáticamente
     }
   };
 
   const bordadosPendientes = bordados.filter(b => !b.completado);
   const bordadosCompletados = bordados.filter(b => b.completado);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando bordados...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Notificaciones */}
+      <Notification
+        message={error || ''}
+        type="error"
+        isVisible={!!error}
+        onClose={clearError}
+        duration={5000}
+      />
+      
+      <Notification
+        message={successMessage || ''}
+        type="success"
+        isVisible={!!successMessage}
+        onClose={clearSuccess}
+        duration={3000}
+      />
            
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
@@ -124,6 +162,7 @@ function App() {
               <TablaBordados
                 bordados={bordadosPendientes}
                 onToggleCompletado={handleToggleCompletado}
+                onTogglePagado={handleTogglePagado}
                 onDelete={handleDeleteBordado}
                 titulo="Bordados Pendientes"
                 mostrarCompletados={false}
@@ -134,6 +173,7 @@ function App() {
               <TablaBordados
                 bordados={bordadosCompletados}
                 onToggleCompletado={handleToggleCompletado}
+                onTogglePagado={handleTogglePagado}
                 onDelete={handleDeleteBordado}
                 titulo="Bordados Completados"
                 mostrarCompletados={true}

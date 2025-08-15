@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Bordado } from '../types/Bordado';
 
 interface FormularioBordadoProps {
-  onSubmit: (bordado: Omit<Bordado, 'id' | 'fechaCreacion' | 'completado'>) => void;
+  onSubmit: (bordado: Omit<Bordado, 'id' | 'fechaCreacion' | 'completado' | 'pagado'>) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -24,12 +24,21 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const precioTotal = formData.cantidad * formData.precio;
     
+    // Si no se proporciona fecha de entrega, establecer para mañana
+    let fechaEntrega = formData.fechaEntrega;
+    if (!fechaEntrega) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 2);
+      fechaEntrega = tomorrow.toISOString().split('T')[0];
+    }
+    
     onSubmit({
       ...formData,
+      fechaEntrega,
       precioTotal
     });
 
@@ -45,9 +54,9 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nombre del Cliente
@@ -72,9 +81,8 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
               name="numeroContacto"
               value={formData.numeroContacto}
               onChange={handleChange}
-              required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Ej: 3123456789"
+              placeholder="Ej: 3123456789 (opcional)"
             />
           </div>
         </div>
@@ -93,7 +101,7 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Cantidad
@@ -134,8 +142,8 @@ export const FormularioBordado: React.FC<FormularioBordadoProps> = ({ onSubmit, 
               name="fechaEntrega"
               value={formData.fechaEntrega}
               onChange={handleChange}
-              required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Si no se especifica, será para mañana"
             />
           </div>
         </div>
